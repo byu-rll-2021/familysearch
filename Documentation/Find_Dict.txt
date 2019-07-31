@@ -1,0 +1,128 @@
+This is a guide on how to format your names dictionary using the RunFamilySearch.bat file.
+
+GENERAL FORMATTING:
+
+A dictionary in python looks like this:
+
+{'thing1':'associated_thing1', 'thing2':'associated_thing2'}
+
+or 
+
+{'thing1':'associated_thing1', 'thing2':'associated_thing2', 'thing3':'associated_thing3', 'other':'more_things'}
+
+etc.
+
+thing1 and thing2, etc are going to be the names your variables have in your csv
+associated_thing1 and associated_thing2, etc are going to be the names that we have for our variables
+
+VARIABLES YOU CAN MATCH ON:
+
+	Variable (our name)	Description
+
+	index 	 		Unique Index REQUIRED
+	id  			FS ID. You shouldn't have this. It won't help if you do
+	name  			Full Name without prefixes and suffixes if possible
+	gender 
+	birthDate  		dd mmm... yyyy
+
+	birthPlace		City, County, State, Country
+	christeningDate		dd mmmm... yyyy
+	christeningPlace	City, County, State, Country
+	deathDate		dd mmmm... yyyy
+	deathPlace		City, County, State, Country
+
+	burialDate		dd mmmm... yyyy
+	burialPlace		City, County, State, Country
+	marriageDate		dd mmmm... yyyy
+	marriagePlace		City, County, State, Country
+	mid			Mother FSID. You probably don't have this, and it won't help if you do
+
+	motherName		Full Name without prefixes and suffixes if possible
+	mgender			
+	motherBirthDate		dd mmmm... yyyy
+	motherBirthPlace	City, County, State, Country
+	mcdate			Mother Christening Date; dd mmmm... yyyy
+
+	mcplace			Mother Christening Place
+	motherDeathDate		dd mmmm... yyyy
+	motherDeathPlace	City, County, State, Country
+	mbudate			Mother Burial Date; dd mmmm... yyyy
+	mbuplace		Mother Burial Place
+
+	motherMarriageDate	dd mmmm... yyyy
+	motherMarriagePlace	City, County, State, Country
+	did			Dad FSID. You probably don't have this, and it won't help if you do
+	fatherName		Full Name without prefixes and suffixes if possible
+	dgender			
+
+	fatherBirthDate		dd mmmm... yyyy
+	fatherBirthPlace	City, County, State, Country
+	dcdate			Dad Christening Date; dd mmmm... yyyy
+	dcplace			Dad Christening Place
+	fatherDeathDate		dd mmmm... yyyy
+
+	fatherDeathPlace	City, County, State, Country
+	dbudate			Dad Burial Date; dd mmmm... yyyy
+	dbuplace		Dad Burial Date
+	fatherMarriageDate	dd mmmm... yyyy
+	fatherMarriagePlace	City, County, State, Country
+
+	sid			Spouse FSID. You probably don't have this and it won't help if you do
+	spouseName		Full Name without prefixes and suffixes if possible
+	sgender			
+	spouseBirthDate		dd mmmm... yyyy
+	spouseBirthPlace	City, County, State, Country
+	
+	scdate			Spouse Christening Date; dd mmmm... yyyy
+	scplace			Spouse Christening Place
+	spouseDeathDate		dd mmmm... yyyy
+	spouseDeathPlace	City, County, State, Country
+	sbudate			Spouse Burial Date; dd mmmm... yyyy
+
+	sbuplace		Spouse Burial Place
+	spouseMarriageDate	dd mmmm... yyyy
+	spouseMarriagePlace	City, County, State, Country
+	kids			Semicolon separated kid names; Full Name without prefixes and suffixes if possible 
+	kiddates		Semicolon separated kid birthdates; dd mmmm... yyyy
+
+	kidplaces		Semicolon separated kid birthplaces
+	kidgenders		Semicolon separated kid genders
+	sibs			Semicolon separated sibling names; Full Name without prefixes and suffixes if possible 
+	sibdates		Semicolon separated sibling birthdates; dd mmmm... yyyy
+	sibplaces		Semicolon separated sibling birthplaces
+
+	sibgenders		Semicolon separated sibling genders
+	resdate			Still under construction. Potentially would check residency in the future
+	resplace		Still under construction. Potentially would check residency in the future
+
+CLARIFICATION:
+
+	City, County, State, Country means places should look like this:
+			City, County, State, Country
+			City, , State, Country
+			, County, State, Country
+			, , State, Country
+			, , , Country
+
+	dd mmmm... yyyy means that we want dates that look like this: 
+			10 August 1993
+			1 Sep 1881
+			Jan 2000
+			1532
+
+	The following are invalid:
+			1/12/1994
+			17Jan1922
+			2 Sep 12 (If you would rather that these cases were valid feel free to tweak _parse_date() in helper_functions.py)
+
+	Semicolon separated looks like this:
+			George Hilton;May Hilton;Beeton Hilton
+	
+	Siblings or children need to follow the same order if they have information for more than one variable:
+		So if I knew that George was born in Indiana, May was born in Idaho and Beeton was born in Arkansas, then 
+		I would have
+
+			kids='George Hilton;May Hilton;Beeton Hilton'
+			kidplaces='Indiana;Idaho;Arkansas'
+
+	Gender: You can put pretty much any english way of writing male and female

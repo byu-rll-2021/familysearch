@@ -1,0 +1,26 @@
+FamilySearch.AttachedCensus(year=None)
+
+DESCRIPTION:
+
+	Scrapes all censuses (or the specified year) attached to an individual.
+	This will only handle direct links to the FamilySearch censuses.
+
+PARAMETERS:
+
+	year: If not specified, the code will scrape all attached census records. Otherwise this should be a
+	string of a single census year, and the code will only scrape that year.
+
+EXAMPLE CODE:
+
+	#import familysearch class
+	import sys
+	sys.path.append('R:/JoePriceResearch/Python/all_code')
+	from FamilySearch1 import FamilySearch
+
+	test = FamilySearch('USERNAME','PASSWORD','DIRECTORY','INFILE.csv','OUTFILE.csv',auth=True)
+	test.AttachedCensus(year='1940')
+
+GENERAL INFILE FORMATTING:
+	
+	Save in .csv format, it should be two columns, a list of unique indicies and one of
+    	the FamilySearch pids, in that order with no header.

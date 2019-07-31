@@ -1,0 +1,18 @@
+FamilySeach.Authenticate()
+
+
+NOTE:
+
+This code will read in the 'Authentication_Key.txt' file found in the main folder and check if the key there
+is currently valid. Otherwise it will log in to FamilySearch and get another API key.
+
+
+RETURNS:
+
+A valid API key.
+
+
+EXAMPLE CODE:
+
+fs = FamilySearch('username', 'password', 'directory')
+key = fs.Authenticate()

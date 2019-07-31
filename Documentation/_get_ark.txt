@@ -1,0 +1,70 @@
+FamilySearch._get_ark(key='BLANK', merge='True', file_type='csv')
+
+PARAMETERS:
+
+key: string, default is 'BLANK', which will use automatic authentication for
+	The family search authentication key. If you want to provide your
+	own key go to familysearch.org/platform
+	to get a key. Make sure to copy the space at the end!
+
+merge: boolean, default is True. This will automatically merge the output 
+	file with your originally provided outfile, and save it under the 
+	name of your outfile.
+
+	If merge = False, a seperate outfile will be saved with the ouput 
+	of _get_ark()
+
+file_type: string, default is 'csv'. This parameter determines the file
+	type of the outfile. The default, or 'csv' will result in a file
+	saved in .csv format. 'stata' and '.dta' are supported options that
+	will result in the file being saved in .dta format. 
+
+	An unsupported option will result in the outfile being saved in .csv format.
+
+
+
+What it does:
+
+	When you scrape a person it doesn't return arkids. Insead it gives you
+	description ids. This function takes in those description ids and
+	gives you the arkids, as well as the source title.
+
+	It will save a new file which can be easily merged to your other outfile
+	using a merge command in Stata. (I recommend merging on Index)
+
+EXAMPLE CODE:
+
+import sys
+sys.path.append('R:/JoePriceResearch/Python/all_code')
+from FamilySearch1 import FamilySearch
+test = FamilySearch('cool_dude65','ya_dude','R:/JoePriceResearch/record_linking/python','in1.csv','out.dta')
+text.ScrapePerson() //Line optional, but reccommended. 
+test._get_ark()
+
+HOW TO RUN FROM COMMAND LINE:
+1. Open a command prompt
+2. Copy this line of code, replacing the parameters as needed
+"R:/JoePriceResearch/Python/Anaconda3/python.exe" -c "import sys; sys.path.append('R:/JoePriceResearch/Python/all_code'); from FamilySearch1 import FamilySearch; famsearch_obj = FamilySearch('cool_dude64','rad_password224','R:/WORKING_DIRECTORY','INFILE.csv','OUTFILE.dta'); famsearch_obj._get_ark(key='asdf;;--93q4hionekld-production ')"
+
+HOW TO FORMAT INFILE:
+
+This is built on the ScrapePerson() function. Thus, you can call this right after 
+doing ScrapePerson() and it will work perfectly. (Like in the example code).
+See ScrapePerson documentation on how to format infile if that's what you're doing.
+
+If for whatever reason you ALREADY have a list of description IDs and you want
+to use this function WITHOUT using ScrapePerson the data should be formatted as follows:
+
+IMPORTANT: This uses the outfile as the infile. So, the infile name won't matter, and
+the outfile should already exist and be formatted as follows
+
+.csv format
+
+
+uid	FSID		sources
+344	KKS-QW1Q	WWO-KOW2,WWO-CCK1,PPE-V982
+55417	RRW-BSWQ	BOI-234S,BOI-BOWX
+...
+
+There can be other columns and the columns can be in any order, but they must be
+spelled exactly as above.

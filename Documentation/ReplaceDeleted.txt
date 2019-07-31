@@ -1,0 +1,114 @@
+FamilySeach.ReplaceDeleted(sheet_list, idcol, google_sheet=True, header=True, delim=",")
+
+This function uses the google and family search APIs to get FSIDs from a 
+google sheet and get the new ids of all of the people that are on the list
+that got merged into another person's profile and was consequently deleted.
+I am not sure about the run time but an approximate time remaining will be
+printed to the console.
+
+PARAMETERS:
+
+google_sheet: bool
+	Defaults to true. This is a just a switch statement so the program
+	knows whether to look for a google sheet or a file
+
+sheet_list: string or list
+	Declares which google sheets/files will be looked at for deleted observations.
+	given https://docs.google.com/spreadsheets/d/1jhn5D1HFWnDr3JHgu3E6ktbuL7FIUvmSLGfIxZj9ZVk/edit#gid=0
+        	sheet_list[i]   = "1jhn5D1HFWnDr3JHgu3E6ktbuL7FIUvmSLGfIxZj9ZVk"
+	***Note: if only one sheet is desired it may be entered as a string and it
+        	will be coerced into a list with one element 
+
+idcol: google_sheet=True: string/ google_sheet=False: int
+	each column in a google sheet has a corresponding letter key. This
+	uses the one given as the column of FSIDs to be used and replaced.
+	The number you put will automatically have one subtracted
+	from it so start you count with 1 so that python can do its thing
+	starting at 0 with indices.
+
+header: bool
+	Whether or not there are headers in the file. The code will never change
+	the first element unless you declare header=False.
+
+delim: str
+	This is only necessary for the google_sheet=False option.
+	The default is a csv reader but you can insert a "\t" for
+	a tsv or any other delimiter in a basic raw data file 
+
+
+METHODS:
+This is a method of the FamilySearch class.
+It is built with functions from the file google_helpers.py
+and other methods of the FamilySearch class but has none 
+of its own.
+
+EXAMPLE CODE:
+
+For a Google Sheet:
+
+import os
+os.chdir(r"R:\JoePriceResearch\Python\all_code")
+from FamilySearch1 import FamilySearch
+test = FamilySearch('familysearchuser', 'secretpassword', "any\directory\here\you\wont\use\it\with\this")
+test.ReplaceDeleted("1jhn5D1HFWnDr3JHgu3E6ktbuL7FIUvmSLGfIxZj9ZVk", "a")
+
+For a file saved on the computer:
+
+from FamilySearch1 import FamilySearch
+test = FamilySearch('familysearchuser', 'secretpassword', "any\directory\here\you\wont\use\it\with\this")
+test.ReplaceDeleted("Z:\Insert\Real\Directory\Here\file.tsv", 2, google_sheet=False, header=False, delim="\t")
+	* the file path can be given to the initialization of the FamilySearch object and then only the
+	  filename should be needed as an argument for ReplaceDeleted() 
+
+
+HOW TO RUN FROM COMMAND LINE (Guaranteed to work on campus computers):
+1. Open a command prompt
+2. Copy this line of code, replacing the parameters as needed
+"R:/JoePriceResearch/Python/Anaconda3/python.exe" -c "import sys; sys.path.append('R:/JoePriceResearch/Python/all_code'); from FamilySearch1 import FamilySearch; famsearch_obj = FamilySearch('cool_dude64','rad_password224','R:/WORKING_DIRECTORY'); famsearch_obj.ReplaceDeleted("iry28rh39h83", "a")"
+
+or
+
+1. Open a command prompt
+2. Open the R drive version of python
+"R:/JoePriceResearch/Python/Anaconda3/python.exe"
+3. Copy code, replacing parameters as needed
+import sys
+sys.path.append('R:/JoePriceResearch/Python/all_code')
+from FamilySearch1 import FamilySearch
+famsearch_obj = FamilySearch('familysearchuser', 'secretpassword', "any\directory\here\you\wont\use\it\with\this")
+famsearch_obj.ReplaceDeleted("iry28rh39h83", "a")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
