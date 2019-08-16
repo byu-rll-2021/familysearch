@@ -97,6 +97,7 @@ class FamilySearch:
         self.outfile = outfile
         self.id = fsid
         self.arkid = arkid
+        self.contributor_id = 'KWNC-SP8'
         
         # constants
         self.CLIENT_ID = 'b0OOX6VXJ1RV' # This is the app key given to the lab

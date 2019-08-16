@@ -213,12 +213,12 @@ def ScrapePerson(self, basic=True, fam_death=True,
                             break
                         except:
                             if info.status_code == 401:
-                                self.key = self.Authenticate()
+                                self.token = self.Authenticate()
                                 info = session.get('http://api.familysearch.org/platform/tree/persons?pids=%s' %(ids))
                                 continue
                             time.sleep(2)
                             info = session.get('http://api.familysearch.org/platform/tree/persons?pids=%s' %(ids), 
-                                            headers={'Authorization': 'Bearer %s' %(self.key), 
+                                            headers={'Authorization': 'Bearer %s' %(self.token), 
                                                      'Accept':'application/json'})
                         
                     
@@ -575,7 +575,7 @@ def ScrapePerson(self, basic=True, fam_death=True,
                     #Running non-basic batches secondary scrape
                     if not basic:
                         for i in range(len(cache_reference)):
-                            self.ScrapeFamily(cache_reference[i], self.outfile, cache_followupFSIDs[i], self.key, opened_file=fam_info, fam_death=fam_death, sibs=sibs)
+                            self.ScrapeFamily(cache_reference[i], self.outfile, cache_followupFSIDs[i], self.token, opened_file=fam_info, fam_death=fam_death, sibs=sibs)
                             n_fam += max_people
                         cache_followupFSIDs = []
                         cache_reference = []
@@ -592,7 +592,7 @@ def ScrapePerson(self, basic=True, fam_death=True,
             
         #complete whatever secondary batch remains uncompleted.        
         if not basic:
-            self.ScrapeFamily(reference, self.outfile, followupFSIDs, self.key, opened_file=fam_info, fam_death=fam_death, sibs=sibs)
+            self.ScrapeFamily(reference, self.outfile, followupFSIDs, self.token, opened_file=fam_info, fam_death=fam_death, sibs=sibs)
             n_fam += len(followupFSIDs)
             print(str(n_fam) + ' total family members scraped')
 
@@ -1338,10 +1338,10 @@ def ScrapeFamily(self, reference, outfile, ids_set, key, opened_file, fam_death,
                 print('Throttled, waiting {0: .1f} seconds!'.format(wait))
                 time.sleep(wait)
             else:
-                key = self.Authenticate()
+                self.token = self.Authenticate()
         except:
             pull = requests.get('http://api.familysearch.org/platform/tree/persons?pids=%s' %(ids), 
-                            headers={'Authorization': 'Bearer %s' %(key), 
+                            headers={'Authorization': 'Bearer %s' %(self.token), 
                                      'Accept':'application/json'})
                             
     names_etc = []
