@@ -13,6 +13,7 @@ Created on Fri Oct 27 17:18:33 2017
 Recommended Batch Sizes: 
     Basic = True:
         in theory there is no cap, the outfile is only opened for appending in 
+        in theory there is no cap, the outfile is only opened for appending in 
         this case so the file size shouldn't slow down the program at all. Of
         course, this is theoretical and there has not been extensive testing 
         with large files as of yet. 
@@ -1689,7 +1690,7 @@ def ScrapeFamily(self, reference, outfile, ids_set, key, opened_file, fam_death,
                              'kid_sexes', \
                              'kid_birthplaces', 'kid_deathdates', \
                              'kid_deathplaces', 'kid_burialdates', \
-                             'kid_burialplaces',], axis='columns')
+                             'kid_burialplaces',], axis=1)
     else:
         raise ValueError('THISHASNOTBEENIMPLEMENTEDCORRECTLYERROR')
         out_df = pd.DataFrame(merged_ref).reindex(['uid', 'spouse_names', \
