@@ -581,7 +581,7 @@ def ScrapePerson(self, basic=True, fam_death=True,
                         cache_followupFSIDs = []
                         cache_reference = []
                     
-                    if (x + 1) % 500 == 0:
+                    if (x + 1) % 600 == 0:
                         if t1 == 0:
                             t1 = t0
                         else:
