@@ -6,7 +6,7 @@ Created on Tue Oct 24 17:26:03 2017
 """
 
 import sys
-sys.path.append(r'R:\JoePriceResearch\Python\Anaconda3\Lib\site-packages')
+sys.path.append(r'R:\JoePriceResearch\Python\AnacondaNew\Lib\site-packages')
 
 import os
 import re
@@ -34,6 +34,8 @@ from . import Find
 from . import Find_new
 from . import google_helpers
 from . import DescendancySheet
+from . import AddPerson
+from . import DeletePerson
 
 sys.path.insert(0, 'R:\JoePriceResearch\RA_work_folders\Ben_Branchflower')
 import sib_arks_ScrapePerson
@@ -260,6 +262,9 @@ class FamilySearch:
     AttachedCensus = AttachedCensus.AttachedCensus
     GetRecordHints = GetRecordHints.GetRecordHints
     DescendancySheet = DescendancySheet.DescendancySheet
+    AddPerson=AddPerson.AddPerson
+    DeletePerson=DeletePerson.DeletePerson
+    
     # CheckRecords = CheckRecords.CheckRecords
     GetPid = PidFromArk.GetPid
     GetPidFromArk = GetPidFromArk.GetPidFromArk

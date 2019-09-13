@@ -133,6 +133,8 @@ def AttachedCensus(self, year=None, get_census_data=True):
         # Define the regular expression to find.
         if year is None:
             match = 'United States Census'
+        elif type(year) == int:
+            match = 'United States Census, {}'.format(year)
         elif year.isdigit():
             match = 'United States Census, {}'.format(year)
         elif re.search('[Dd]eath', year):

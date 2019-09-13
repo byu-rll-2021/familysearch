@@ -186,7 +186,7 @@ def _get_siblings(self, input_token = 'BLANK'):
     
     print(str(row_count) + ' total siblings scraped')
     
-    out_data.uid = out_data.uid.astype(int)
+    # out_data.uid = out_data.uid.astype(int)
     
     #save
     try:
