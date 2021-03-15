@@ -29,7 +29,9 @@ sys.path.append(r'R:\JoePriceResearch\Python\Anaconda3\Lib\site-packages')
 import pandas as pd
 import re
 import requests
+import os
 from time import sleep, time
+import json
 # from selenium.common.exceptions import NoSuchElementException
 import http.client
 
@@ -158,11 +160,15 @@ def ReplaceDeleted(self, sheet_list='', idcol='A', google_sheet=True,
                         switch_502 = True
                         split_lists.append(ids[:int(len(ids.split(',')))])
                         split_lists.append(ids[int(len(ids.split(','))):])
-                    elif pull.status_code != 200:
-                        print('Congratulations, you encountered a',
-                              pull.status_code, 'error! Make sure to let Sebastian',
-                              'know about this as he will know how to fix it')
-                        sleep(10)
+                    elif pull.status_code == 204:
+                        print("204 error.")
+                        raise e
+                    elif pull.status_code == 429:
+                        wait = (int(pull.headers['Retry-After'])*1.1)
+                        print('Throttled, waiting {0: .1f} seconds!'.format(wait))
+                        time.sleep(wait)
+                    if i == 4:
+                        raise badRequestError
                     elif pull.status_code == 200 and len(split_lists) == 0:
                         again = False
                 # Get the text.
@@ -225,9 +231,13 @@ def ReplaceDeleted(self, sheet_list='', idcol='A', google_sheet=True,
                             newid = re.search('[0-9A-Z]{4}-[0-9A-Z]{3}[0-9A-Z]?', info.json()['persons'][0]['id'])[0]
                         except KeyError as e:
                             print('new format of json')
+                            with open('out_test.txt', 'w') as out:
+                                json.dump(out, info.json(), indent = 4)
+                            print(f'Exported json for pid {fsid} to {os.getcwd()}\\out_test.txt')
+                            newid = ''
                             # print('\n\n', info.json())
                             # print('\n\n', info.json().keys())
-                            raise e
+                            # raise e
                     except (IndexError, ValueError) as e:
                         raise e
                     except:

@@ -13,7 +13,6 @@ Created on Fri Oct 27 17:18:33 2017
 Recommended Batch Sizes: 
     Basic = True:
         in theory there is no cap, the outfile is only opened for appending in 
-        in theory there is no cap, the outfile is only opened for appending in 
         this case so the file size shouldn't slow down the program at all. Of
         course, this is theoretical and there has not been extensive testing 
         with large files as of yet. 
@@ -41,6 +40,7 @@ import requests
 import re
 import time
 import os
+import json
 
 max_people = 200
 
@@ -189,7 +189,8 @@ def ScrapePerson(self, basic=True, fam_death=True,
                     # Make the request to get the max_people people
                     info = session.get('http://api.familysearch.org/platform/tree/persons?pids=%s' %(ids))
                     
-                    
+                    #print(info.status_code)
+                    # good response
                     
                     ##Try a lot to get the request to actually work
                     for z in range(15):

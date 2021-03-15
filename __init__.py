@@ -6,7 +6,7 @@ Created on Tue Oct 24 17:26:03 2017
 """
 
 import sys
-sys.path.append(r'R:\JoePriceResearch\Python\AnacondaNew\Lib\site-packages')
+sys.path.append(r'R:\JoePriceResearch\Python\Miniconda\Lib\site-packages')
 
 import os
 import re
@@ -23,9 +23,10 @@ from . import GetRecordHints
 from . import AttachedCensus
 from . import PidFromArk
 from . import GetPidFromArk
+from . import GetPidFromArkChunk
 from . import RAGui
-from . import ScrapeRecord
-from countyprepper import CountyPrepper
+#from . import ScrapeRecord
+#from countyprepper import CountyPrepper
 from . import _get_ark
 from . import _get_siblings
 from . import _get_two
@@ -36,8 +37,10 @@ from . import google_helpers
 from . import DescendancySheet
 from . import AddPerson
 from . import DeletePerson
+from . import GetBlueHintsAA
+#from . import ScrapeIslands
 
-sys.path.insert(0, 'R:\JoePriceResearch\RA_work_folders\Ben_Branchflower')
+sys.path.insert(0, 'R:\JoePriceResearch\RA_work_folders\Ben_Branchflower\python_files')
 import sib_arks_ScrapePerson
 
 
@@ -189,14 +192,14 @@ class FamilySearch:
         j.close()
         return True
     
-        
+    """    
     def PrepCounty(self):
         '''
         Uses the CountyPrepper object, and calls its main method
         '''
         cp = CountyPrepper(self.username,self.password,self.county,self.infile,self.outfile)
         cp.prep_data()
-    
+    """
     
     def _timer(self, switch, row_count=0, numobs=1, ndigits=2):
         '''
@@ -264,12 +267,15 @@ class FamilySearch:
     DescendancySheet = DescendancySheet.DescendancySheet
     AddPerson=AddPerson.AddPerson
     DeletePerson=DeletePerson.DeletePerson
+    GetBlueHintsAA=GetBlueHintsAA.GetBlueHintsAA
     
     # CheckRecords = CheckRecords.CheckRecords
     GetPid = PidFromArk.GetPid
     GetPidFromArk = GetPidFromArk.GetPidFromArk
+    GetPidFromArkChunk = GetPidFromArkChunk.GetPidFromArkChunk
     RAGui = RAGui.RAGui
-    ScrapeRecord = ScrapeRecord.ScrapeRecord
+    #ScrapeRecord = ScrapeRecord.ScrapeRecord
+    #ScrapeIslands = ScrapeIslands.ScrapeIslands
     
     # These functions support ScrapePerson.
     Ping_API = _get_ark.Ping_API

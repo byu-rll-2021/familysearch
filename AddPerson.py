@@ -4,10 +4,8 @@ This file contains the main body of the AddPerson method of the Familysearch
 class.
 
 Created: 23 July 2018
-Last edited: 27 July 2018, Ben Branchflower
+Last edited: 9 September 2019, Ben Busath
 
-Currently just building the skeleton of the code and starting to fill in the
-holes
 
 """
 
@@ -24,13 +22,22 @@ import time
 def AddPerson(self,token=None,names=None,max_people=1):
     """
     This function creates profiles on familysearch based on the given
-    information. It requires a very specific format that is broken down
-    into relatively small parts to help me and future editors see the process
-    clearly
+    information. Current possible person information that can be added 
+    are given name, surname, gender, birthdate, birthplace, deathdate, deathplace,
+    burialdate, burialplace, residence date, residence place.
     
-    Note: The intention is to implement this as part of the FamilySearch class
-    but it is not currently being used as a method to facilitate testing. When
-    the function is ready for beta testing self will be added where appropriate
+    Input data requires unique numerical index column with label title 'index'
+    
+    PARAMETER INFO
+    
+    token: FS Authentication Token
+    
+    names: grabbing dictionary for renaming column labels. Required variable names
+            are in the varlist python lsit.
+    
+    FIXME
+    max_people: max people to be added within one API call. Not implemented yet,
+                default set at 1
     """
     # 
     if token == None:
@@ -86,7 +93,6 @@ def AddPerson(self,token=None,names=None,max_people=1):
         outfile.write('index,pid\n')
         
         row_count=len(df.index)
-        # FIXME: this loop will not grab any of the actual data for now
         for num,row_index in enumerate(df.index):
             self._timer('on')
             
@@ -154,7 +160,8 @@ def AddPerson(self,token=None,names=None,max_people=1):
                     burial_dict['date'] = {'original':f'{burialdate}'}
                 if burialplace != '':
                     burial_dict['place'] = {"original" : f'{burialplace}'}
-                  
+            
+            
             # fill in residence information
             residence_dict=None
             if (residencedate!='')|(residenceplace!=''):
@@ -163,7 +170,7 @@ def AddPerson(self,token=None,names=None,max_people=1):
                     residence_dict['date'] = {'original':f'{residencedate}'}
                 if residenceplace != '':
                     residence_dict['place'] = {"original" : f'{residenceplace}'}
-                    
+            
             
             # adding the birth. death and other info into the facts list if provided
             facts_list=[birth_dict, death_dict, burial_dict, residence_dict]
@@ -194,7 +201,8 @@ def AddPerson(self,token=None,names=None,max_people=1):
                 if response.status_code == 201: # s successful addition
                     fsid = re.search('[A-Z0-9]{4}-[A-Z0-9]{3,4}',
                                      response.headers['link']).group()
-                    #write id to file
+                    
+                    # write created id to file
                     outfile.write(f"{index},{fsid}\n")
                 # throttled
                 elif response.status_code == 429:
@@ -219,8 +227,7 @@ def AddPerson(self,token=None,names=None,max_people=1):
 
                     
                    
-    
-# test case, signle individual successfully added 24 July 2018
+
                 
 
 
@@ -239,7 +246,7 @@ if __name__=='__main__':
     
     sys.path.append(r'R:\JoePriceResearch\Python\all_code')
     from FamilySearch1 import FamilySearch
-    fs=FamilySearch('benbusath','1254Castlecombe.',os.getcwd(),infile,outfile)
+    fs=FamilySearch('laren.edwards','ledward5',os.getcwd(),infile,outfile)
     fs.AddPerson()
     print(pd.read_csv(outfile).head())
     #results.headers

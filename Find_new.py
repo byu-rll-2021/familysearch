@@ -931,7 +931,8 @@ if __name__ == '__main__':
     os.chdir(r"R:\JoePriceResearch\Python\all_code")
     from FamilySearch1 import FamilySearch
     
-    fs = FamilySearch('bbranchf', 'chimps58', r'R:\JoePriceResearch\Python\all_code\FamilySearch1\test_data')
+    #fs = FamilySearch('bbranchf', 'chimps58', r'R:\JoePriceResearch\Python\all_code\FamilySearch1\test_data')
+    fs = FamilySearch('laren.edwards', 'ledward5', r'R:\JoePriceResearch\Python\all_code\FamilySearch1\test_data')
     fs.infile = 'find_test_catholic.csv'
     fs.outfile = 'find_test_out.csv'
     
@@ -939,9 +940,11 @@ if __name__ == '__main__':
     The CSV open function below is just a lazy way to clear the file
     if you do not wish to append to previous information.
     '''
+    '''
     with open(fs.outfile, 'w', newline='') as csvFile:
             writer = csv.writer(csvFile)
     csvFile.close()
+    #'''
     
     '''
     Runs the FindPerson function for each row of the csv

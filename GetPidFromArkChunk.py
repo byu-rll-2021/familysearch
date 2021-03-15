@@ -2,7 +2,7 @@
 """
 Created on Tue Jul 24 11:42:59 2018
 
-@author: bbranchf
+@author: bbranchf, jalenMorgan
 
 This function takes a file of arks and writes a file with the pids that are 
 attached to those arks, if any. The outfile only writes anything if there is
@@ -43,7 +43,7 @@ import requests
 import pandas as pd
 
 
-def GetPidFromArk(self, ark_col=1, header=0, max_records=75, token=None):
+def GetPidFromArkChunk(self, ark_col=1, header=0, max_records=75, chunk_size=10000, chunk_columns=None, token=None):
     """
     This function takes a list of arks and makes a crosswalk of arks-pids as output.
     This will run faster and more consistently than its predecessor, PidFromArk.
@@ -59,6 +59,11 @@ def GetPidFromArk(self, ark_col=1, header=0, max_records=75, token=None):
     					at the time it was written but is not necessarily the case if the
     					website changed how it does things. It can be reduced and still 
     					work but will run slower for no benefit, this is not recommended.
+    chunk_size (int): the number of rows to read at a time from the file. (When a file is especially large,
+                                        this will allow the file to be iterated through.
+    chunk_columns (None or list of strings): The columns to get when reading from the file. This can speed
+                                        up the reading from the file as you will not have to read every
+                                        column.
     token (str): In the case that you would like to submit your own API token rather than
     			using the class default you can put it in here
     
@@ -72,11 +77,11 @@ def GetPidFromArk(self, ark_col=1, header=0, max_records=75, token=None):
     
     # Check to see what type of file the input is and read it.
     if ark_pid[-3:] == 'csv':
-        ark_df = pd.read_csv(ark_pid)
+        ark_itr = pd.read_csv(ark_pid, chunksize=chunk_size, usecols=chunk_columns)
     elif ark_pid[-3:] == 'dta':
-        ark_df = pd.read_stata(ark_pid)
+        ark_itr = pd.read_stata(ark_pid, chunksize=chunk_size, columns=chunk_columns)
     elif ark_pid[-3:] == 'lsx':
-        ark_df = pd.read_excel(ark_pid)
+        ark_itr = pd.read_excel(ark_pid, chunksize=chunk_size, columns=chunk_columns)
         
     # get the class token if none was passed manually
     if token is None:
@@ -90,84 +95,90 @@ def GetPidFromArk(self, ark_col=1, header=0, max_records=75, token=None):
                                 'Accept':'application/json',
                                 'Content-type': 'application/json'})
 
-        row_count = ark_df.shape[0]
-        
         # writing headers
         outfile.write('ark,pid\n')
-        
+                
         # establishing the node to access
         url = 'https://www.familysearch.org/service/tree/links/sources/attachments'
-        
-        URIs = []
-        for index, ark in enumerate(ark_df.iloc[:,ark_col]):
-
-            # setting the timer
-            self._timer('on')
             
-            URIs.append(f'https://familysearch.org/ark:/61903/1:1:{ark}')
-            if len(URIs) == max_records or index == row_count - 1:
-                try:
-                    for i in range(5):
-                        response = session.post(url, data=json.dumps({'uris':URIs}))
-                        
-                        #print(response.status_code)
-                        # good response
+        # Loop through the chunks.
+        for ark_df in ark_itr:
+            row_count = ark_df.shape[0]
+            
+            URIs = []
+            for index, ark in enumerate(ark_df.iloc[:,ark_col]):
+                if index % 750 == 0:
+                    print("another 750")
+
+                # setting the timer
+                self._timer('on')
+                
+                URIs.append(f'https://familysearch.org/ark:/61903/1:1:{ark}')
+
+                # Make the request when we have enough URIs in the list or have reached the end of a chunk.
+                if len(URIs) == max_records or index == row_count - 1:
+                    try:
+                        for i in range(5):
+                            response = session.post(url, data=json.dumps({'uris':URIs}))
                             
-                        if response.status_code == 200:
-                            # grabbing the attached person if there is one
-                            if response.json() != {}:
-                                info = response.json()['attachedSourcesMap']
-                                # ! BOTTLENECK ! : Looping through all of the pids,
-                                # how can we prevent this?
-                                # if not prevent, minimize the cost of it
-                                for full_ark in info.keys():
-                                    for attachment in info[full_ark]:
-                                        if 'persons' in attachment.keys():
-                                            cached_ark = re.search(r"(?<=1:1:)([A-Z0-9]{4}-[A-Z0-9]{3,4})",full_ark).group(1)
-                                            outfile.write(f"{cached_ark},{attachment['persons'][0]['entityId']}\n")
-                            URIs = []
-                            break
-                            
-                        # throttled, I don't think this will actually happen on
-                        # this code as it isn't really an API call
-                        elif response.status_code == 429:
-                            wait = (int(response.headers['Retry-After'])*1.1)
-                            print('Throttled, waiting {0: .1f} seconds!'.format(wait))
-                            time.sleep(wait)
-                            
-                        # not authorized, get a new API token
-                        elif response.status_code == 401:
-                            token = self.Authenticate()
-                            
-                        # bad request
-                        elif response.status_code == 400:
-                            print('Bad Request')
-                            URIs = []
-                            continue
-                            
-                        # some other status code
-                        else:
-                            print('\nPotential Error, Status code:',
-                                  response.status_code, '\n')
-                            if i == 4:
-                                print(f'Could not get values around line {index}, moving on')
-                                URIs = []
+                            #print(response.status_code)
+                            # good response
                                 
-                except Exception as e:
-                    print(e)
-                    URIs = []
-                    
+                            if response.status_code == 200:
+                                # grabbing the attached person if there is one
+                                if response.json() != {}:
+                                    info = response.json()['attachedSourcesMap']
+                                    # ! BOTTLENECK ! : Looping through all of the pids,
+                                    # how can we prevent this?
+                                    # if not prevent, minimize the cost of it
+                                    for full_ark in info.keys():
+                                        for attachment in info[full_ark]:
+                                            if 'persons' in attachment.keys():
+                                                cached_ark = re.search(r"(?<=1:1:)([A-Z0-9]{4}-[A-Z0-9]{3,4})",full_ark).group(1)
+                                                outfile.write(f"{cached_ark},{attachment['persons'][0]['entityId']}\n")
+                                URIs = []
+                                break
+                                
+                            # throttled, I don't think this will actually happen on
+                            # this code as it isn't really an API call
+                            elif response.status_code == 429:
+                                wait = (int(response.headers['Retry-After'])*1.1)
+                                print('Throttled, waiting {0: .1f} seconds!'.format(wait))
+                                time.sleep(wait)
+                                
+                            # not authorized, get a new API token
+                            elif response.status_code == 401:
+                                token = self.Authenticate()
+                                
+                            # bad request
+                            elif response.status_code == 400:
+                                print('Bad Request')
+                                URIs = []
+                                continue
+                                
+                            # some other status code
+                            else:
+                                print('\nPotential Error, Status code:',
+                                      response.status_code, '\n')
+                                if i == 4:
+                                    print(f'Could not get values around line {index}, moving on')
+                                    URIs = []
+                                    
+                    except Exception as e:
+                        print(e)
+                        URIs = []
+                        
 
-            
-                # report on the progress and time
-                if index % 1800 == 1799:
-                    print(index + 1, f'of {row_count}')
-                    self._timer('off', row_count=row_count, numobs=max_records,
-                                ndigits=4)
+                
+                    # report on the progress and time
+                    if index % 1800 == 1799:
+                        print(index + 1, f'of {row_count}')
+                        self._timer('off', row_count=row_count, numobs=max_records,
+                                    ndigits=4)
         
     print('\nPIDs Collected')
     # I figured that this functionality may be desired sometime
-    return pd.read_csv(self.outfile,header=0)
+    return #pd.read_csv(self.outfile,header=0)
 
 
 # some tests to get the function working

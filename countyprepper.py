@@ -26,7 +26,7 @@ from time import sleep
 # to be able to access other paths
 sys.path.append('R:\\JoePriceResearch\\Python\\all_code')
 sys.path.append('R:/JoePriceResearch/Python/Anaconda3/Lib/site-packages')
-sys.path.append('R:/JoePriceResearch/Python/Python27/Lib/site-packages')
+#sys.path.append('R:/JoePriceResearch/Python/Python27/Lib/site-packages')
 
 # Import selenium dependencies
 from selenium import webdriver

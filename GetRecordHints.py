@@ -15,7 +15,7 @@ import re
 import requests
 
 
-def GetRecordHints(self, sheet, idcol, out_col, record_type='any', cen_year='', header=True, google_sheet=True, token=None, delim=',', links=True):
+def GetRecordHints(self, sheet, idcolstr, idcolint, out_col, record_type='any', cen_year='', header=True, google_sheet=True, token=None, delim=',', links=True):
     '''
     This function uses the family search api to get record hints for a list
     of pids from a google sheet and adds them to the sheet in the column 
@@ -28,7 +28,9 @@ def GetRecordHints(self, sheet, idcol, out_col, record_type='any', cen_year='', 
         given https://docs.google.com/spreadsheets/d/1jhn5D1HFWnDr3JHgu3E6ktbuL7FIUvmSLGfIxZj9ZVk/edit#gid=0
         sheet = "1jhn5D1HFWnDr3JHgu3E6ktbuL7FIUvmSLGfIxZj9ZVk"
     
-    idcol (str)             = the letter corresponding to the column with FSIDs
+    idcolstr                 = the letter corresponding to the column with FSIDs
+    
+    idcolint                = the index of the column with FSIDs (if not using google sheets)
     
     out_col (str)           = the letter of the column for record links
 
@@ -62,24 +64,22 @@ def GetRecordHints(self, sheet, idcol, out_col, record_type='any', cen_year='', 
     # Read the ids.
     if google_sheet:
         try:
-            ids = pd.Series([x[0] for x in self._google_read(sheet,'Sheet1!{0}:{0}'.format(idcol.upper()))])
+            ids = pd.Series([x[0] for x in self._google_read(sheet,'Sheet1!{0}:{0}'.format(idcolstr.upper()))])
         except:
             time.sleep(5)
             try:
-                ids = pd.Series([x[0] for x in self._google_read(sheet,'Sheet1!{0}:{0}'.format(idcol.upper()))])
+                ids = pd.Series([x[0] for x in self._google_read(sheet,'Sheet1!{0}:{0}'.format(idcolstr.upper()))])
             except:
                 print("Unexpected error:", sys.exc_info()[0])
                 raise            
     else:
-        if type(idcol) == str:
-            idcol = int(input("Please input a number for the column (start at 1): "))
 
         if sheet[-3:] == 'dta':
             full_df = pd.read_stata(sheet)
         else:
             full_df = pd.read_csv(sheet, header=0, sep=delim)
         # Read the ids.
-        ids = full_df.iloc[:,idcol - 1]
+        ids = full_df.iloc[:,idcolint]
     
     # assigning what to look for 
     if record_type == 'census':
@@ -100,7 +100,7 @@ def GetRecordHints(self, sheet, idcol, out_col, record_type='any', cen_year='', 
                             "\nplease input any, census, death, marriage or birth\n")
         if record_type == 'census':
             cen_year = input("\nWhich year would you like")
-        self.GetRecordHints(sheet=sheet, idcol=idcol, out_col=out_col, record_type=record_type, cen_year=cen_year)
+        self.GetRecordHints(sheet=sheet, idcolstr=idcolstr, idcolint=idcolint, out_col=out_col, record_type=record_type, cen_year=cen_year)
     
     # considering the presence of headers
     if google_sheet:
@@ -146,7 +146,7 @@ def GetRecordHints(self, sheet, idcol, out_col, record_type='any', cen_year='', 
                     if pull.status_code == 200:
                         break
                     elif i == 2:
-                        print(f'no record shints retrieved for {fsid}')
+                        print(f'no record hints retrieved for {fsid}')
 
             pers_recs = [fsid]
             try:
