@@ -1,0 +1,123 @@
+FamilySearch.ScrapePerson(basic=True, key='BLANK')
+
+***** NOTE: *****
+We should add a description about the format of the infile 
+
+PARAMETERS:
+
+basic: bool, default is True
+	Denotes if you want to use a basic scrape, or a 'complex' scrape. A basic scrape saves a dataframe
+	with all the information received from Family Search by only querying the FSID given. This includes:
+	all personal variables, (name, birthplace, birthdate, etc.) a list of all Parent, Spouse, and Child
+	FSIDs, and a list of all source ids (different from arkids).
+
+	If basic is set to False, FamilySearch will query each Parent, Spouse and Child FSID to obtain personal
+	information for each of these groups. Finally, a list of Sibling FSIDs are also obtained.
+
+	Note that it will run significantly faster when basic=True
+
+key: string, default is 'BLANK', which will raise an error
+	The family search authentication key. Since automatic authentication is 
+	currently not supported, you provide the key yourself. Go to 
+	familysearch.org/platform
+	to get a key. Make sure to copy the space at the end!
+
+METHODS:
+These aren't really methods, but they work on top of ScrapePerson. See
+
+_get_ark()
+_get_siblings()
+
+EXAMPLE CODE:
+
+For only personal characteristics + list of FSIDs of family
+
+import sys
+sys.path.append('R:/JoePriceResearch/Python/all_code')
+from FamilySearch1 import FamilySearch
+test = FamilySearch('cool_dude65','ya_dude','R:/JoePriceResearch/record_linking/python','in1.csv','out.dta')
+test.ScrapePerson(key='aba;lskdgfjwoweoiva;lvn ')
+		
+Or if you need family information
+	
+import sys
+sys.path.append('R:/JoePriceResearch/Python/all_code')
+from FamilySearch1 import FamilySearch
+test = FamilySearch('cool_dude65','ya_dude','R:/JoePriceResearch/record_linking/python','in1.csv','out.dta')
+test.ScrapePerson(basic=False,key=';alkdfj;slakdjboae ')
+
+HOW TO RUN FROM COMMAND LINE (Guaranteed to work on campus computers):
+1. Open a command prompt
+2. Copy this line of code, replacing the parameters as needed
+"R:/JoePriceResearch/Python/Anaconda3/python.exe" -c "import sys; sys.path.append('R:/JoePriceResearch/Python/all_code'); from FamilySearch1 import FamilySearch; famsearch_obj = FamilySearch('cool_dude64','rad_password224','R:/WORKING_DIRECTORY','INFILE.csv','OUTFILE.dta'); famsearch_obj.ScrapePerson(key='asdf;;--93q4hionekld-production ')"
+
+or
+
+1. Open a command prompt
+2. Open the R drive version of python
+"R:/JoePriceResearch/Python/Anaconda3/python.exe"
+3. Copy code, replacing parameters as needed
+import sys
+sys.path.append('R:/JoePriceResearch/Python/all_code')
+from FamilySearch1 import FamilySearch
+famsearch_obj = FamilySearch('cool_dude64','rad_password224','R:/WORKING_DIRECTORY','INFILE.csv','OUTFILE.dta')
+famsearch_obj.ScrapePerson(key='asdf;;--93q4hionekld-production ')
+
+or
+
+(NOT guaranteed to work :)
+I also made a wrapper function called run_ScrapePerson.py in R:/JoePriceResearch/Python/all_code, that takes as positional
+arguments 
+1.Directory
+2.infile
+3.outfile
+4.key
+
+Though you'll have to figure out the syntax
+
+HOW TO FORMAT INFILE:
+
+use the .csv format
+
+ID	FSID
+1	LLLL-LLL
+2	ABCE-LMZ
+5	QWER-TYU
+...
+
+The ID need not follow any order, but it does need to be unique. I would recommend keeping files under 200,000
+observations.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

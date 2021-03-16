@@ -1,0 +1,23 @@
+FamilySearch.GetPid()
+
+DESCRIPTION:
+
+	Gets all FamilySearch pids attached to a list of ark ids. 
+	This will take an infile and rewrite it (as long as you have a csv). 
+    	Otherwise it will write to a csv with the same name as the infile.
+
+EXAMPLE CODE:
+
+	#import familysearch class
+	import sys
+	sys.path.append('R:/JoePriceResearch/Python/all_code')
+	from FamilySearch1 import FamilySearch
+
+	test = FamilySearch('USERNAME','PASSWORD','DIRECTORY','INFILE.csv','OUTFILE.csv',auth=True)
+	test.GetPid()
+
+GENERAL INFILE FORMATTING:
+	
+	The infile should be two columns, a list of unique indicies and one of
+    	the FamilySearch arkids, in that order with headers. The names don't matter.
+    	It can be a csv, a dta, or an xlsx file.

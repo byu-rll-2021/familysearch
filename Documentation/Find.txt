@@ -1,0 +1,189 @@
+FamilySearch.Find(names=None,report=False)
+
+NOTES:
+
+	If you include some birth information (even just birth place), then the Find code will do much better.
+
+	The code is extremely sensitive to place and date formatting. If you get scores that are all less than 3,
+	check your formatting, as this is very uncommon unless there is a problem with the place or date format.
+	See the explanation below for a good description of this format.
+
+	We find that scores of 6.5 and above are typically good matches. In general, I would say below 4 is never
+	correct, between 4 and 6.5 is right about 50% of the time, between 6.5 and 7.5 is right about 80% of the time,
+	and scores above 7.5 are almost never wrong. This varies a little bit depending on what information you feed
+	the code, but these are rough guidelines.
+
+PARAMETERS:
+
+	names: This is a dictionary containing the list of variables that you have, mapping them to our variable names. 
+	The label should be your variable name, and the data should be our variable name. Our variable names are listed below in
+	the next section, so the second variable will be from that list. So if your index was called 
+	MYSUPERCOOLINDEX and you wanted to match on name (MY_GREAT_NAMES) and birth place (MY_PLACES) you would declare names to be:
+		names = {'MYSUPERCOOLINDEX':'index','MY_GREAT_NAMES': 'name', 'MY_PLACES' : 'birthPlace'}
+		(The order of your infile or names is irrelevant. Also it doesn't matter if they happen to be the same)
+	
+	Default is none. This will use legacy formatting. I wouldn't reccommend, but it's explained below. If you
+	select the default, it assumes there are no headers.
+	
+	See below for possible variables you can match on
+
+	
+	report: Gives a full score report printout at the end. Default is none
+
+VARIABLES YOU CAN MATCH ON:
+
+	Variable		Description
+
+	index 	 		Unique Index REQUIRED
+	id  			FS ID. Generally you won't have this
+	name  			Full Name without prefixes and suffixes if possible
+	gender 
+	birthDate  		dd mmm... yyyy
+
+	birthPlace		City, County, State, Country
+	christeningDate		dd mmmm... yyyy
+	christeningPlace	City, County, State, Country
+	deathDate		dd mmmm... yyyy
+	deathPlace		City, County, State, Country
+
+	burialDate		dd mmmm... yyyy
+	burialPlace		City, County, State, Country
+	marriageDate		dd mmmm... yyyy
+	marriagePlace		City, County, State, Country
+	mid			Mother FSID. You probably don't have this, and it won't help if you do
+
+	motherName		Full Name without prefixes and suffixes if possible
+	mgender			
+	motherBirthDate		dd mmmm... yyyy
+	motherBirthPlace	City, County, State, Country
+	mcdate			Mother Christening Date; dd mmmm... yyyy
+
+	mcplace			Mother Christening Place
+	motherDeathDate		dd mmmm... yyyy
+	motherDeathPlace	City, County, State, Country
+	mbudate			Mother Burial Date; dd mmmm... yyyy
+	mbuplace		Mother Burial Place
+
+	motherMarriageDate	dd mmmm... yyyy
+	motherMarriagePlace	City, County, State, Country
+	did			Dad FSID. You probably don't have this, and it won't help if you do
+	fatherName		Full Name without prefixes and suffixes if possible
+	dgender			
+
+	fatherBirthDate		dd mmmm... yyyy
+	fatherBirthPlace	City, County, State, Country
+	dcdate			Dad Christening Date; dd mmmm... yyyy
+	dcplace			Dad Christening Place
+	fatherDeathDate		dd mmmm... yyyy
+
+	fatherDeathPlace	City, County, State, Country
+	dbudate			Dad Burial Date; dd mmmm... yyyy
+	dbuplace		Dad Burial Date
+	fatherMarriageDate	dd mmmm... yyyy
+	fatherMarriagePlace	City, County, State, Country
+
+	sid			Spouse FSID. You probably don't have this and it won't help if you do
+	spouseName		Full Name without prefixes and suffixes if possible
+	sgender			
+	spouseBirthDate		dd mmmm... yyyy
+	spouseBirthPlace	City, County, State, Country
+	
+	scdate			Spouse Christening Date; dd mmmm... yyyy
+	scplace			Spouse Christening Place
+	spouseDeathDate		dd mmmm... yyyy
+	spouseDeathPlace	City, County, State, Country
+	sbudate			Spouse Burial Date; dd mmmm... yyyy
+
+	sbuplace		Spouse Burial Place
+	spouseMarriageDate	dd mmmm... yyyy
+	spouseMarriagePlace	City, County, State, Country
+	kids			Semicolon separated kid names; Full Name without prefixes and suffixes if possible 
+	kiddates		Semicolon separated kid birthdates; dd mmmm... yyyy
+
+	kidplaces		Semicolon separated kid birthplaces
+	kidgenders		Semicolon separated kid genders
+	sibs			Semicolon separated sibling names; Full Name without prefixes and suffixes if possible 
+	sibdates		Semicolon separated sibling birthdates; dd mmmm... yyyy
+	sibplaces		Semicolon separated sibling birthplaces
+
+	sibgenders		Semicolon separated sibling genders
+	resdate			Still under construction. Potentially would check residency in the future
+	resplace		Still under construction. Potentially would check residency in the future
+
+CLARIFICATION:
+
+	City, County, State, Country means places should look like this:
+			City, County, State, Country
+			City, , State, Country
+			, County, State, Country
+			, , State, Country
+			, , , Country
+
+	dd mmmm... yyyy means that we want dates that look like this: 
+			10 August 1993
+			1 Sep 1881
+			Jan 2000
+			1532
+
+	The following are invalid:
+			1/12/1994
+			17Jan1922
+			2 Sep 12 (If you would rather that these cases were valid feel free to tweak _parse_date() in helper_functions.py)
+
+	Semicolon separated looks like this:
+			George Hilton;May Hilton;Beeton Hilton
+	
+	Siblings or children need to follow the same order if they have information for more than one variable:
+		So if I knew that George was born in Indiana, May was born in Idaho and Beeton was born in Arkansas, then 
+		I would have
+
+			kids='George Hilton;May Hilton;Beeton Hilton'
+			kidplaces='Indiana;Idaho;Arkansas'
+
+	Gender: You can put pretty much any english way of writing male and female
+
+EXAMPLE CODE:
+
+	#import familysearch class
+	import sys
+	sys.path.append('R:/JoePriceResearch/Python/all_code')
+	from FamilySearch1 import FamilySearch
+
+	#Declare which variables I have
+	use_vars = {'my_index':'index', 'my_name':'name', 'my_birthdate':'birthDate'}
+
+	test = FamilySearch('USERNAME','PASSWORD','DIRECTORY','INFILE.csv','OUTFILE.csv',auth=True)
+	test.Find(names=use_vars)
+
+
+GENERAL INFILE FORMATTING:
+	
+	Save in .csv format
+
+	Make sure you have column names at the top
+
+
+LEGACY FORMATTING: (Not reccommended)
+
+	Variable names are ommitted from the top of the csv
+
+	There are 63 Columns representing the following:
+
+        	{0:'index', 1:'id', 2:'name', 3:'gender', 4:'birthDate', 5:'birthPlace',
+                 6:'christeningDate', 7:'christeningPlace', 8:'deathDate', 9:'deathPlace', 10:'burialDate',
+                 11:'burialPlace', 12:'marriageDate', 13:'marriagePlace', 14:'mid', 15:'motherName',
+                 16:'mgender', 17:'motherBirthDate', 18:'motherBirthPlace', 19:'mcdate', 20:'mcplace',
+                 21:'motherDeathDate', 22:'motherDeathPlace', 23:'mbudate', 24:'mbuplace', 25:'motherMarriageDate',
+                 26:'motherMarriagePlace', 27:'did', 28:'fatherName', 29:'dgender', 30:'fatherBirthDate', 
+                 31:'fatherBirthPlace', 32:'dcdate', 33:'dcplace', 34:'fatherDeathDate', 35:'fatherDeathPlace', 
+                 36:'dbudate', 37:'dbuplace', 38:'fatherMarriageDate', 39:'fatherMarriagePlace',
+                 40:'sid', 41:'spouseName', 42:'sgender', 43:'spouseBirthDate', 
+                 44:'spouseBirthPlace', 45:'scdate', 46:'scplace', 47:'spouseDeathDate', 48:'spouseDeathPlace', 
+                 49:'sbudate', 50:'sbuplace', 51:'spouseMarriageDate', 52:'spouseMarriagePlace', 53:'kids',
+                 54:'kiddates', 55:'kidplaces', 56:'kidgenders', 57:'sibs', 
+                 58:'sibdates', 59:'sibplaces', 60:'sibgenders', 61:'resdate',
+                 62:'resplace'}
+
+	Columns for which you don't have information are blank
+
+

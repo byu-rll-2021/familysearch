@@ -1,0 +1,60 @@
+Declaring a new Family Search Class:
+
+from FamilySearch1 import FamilySearch
+FamilySearch(username, password, directory, infile = None, outfile = None, county = None)
+
+Object that exists to interact with family search api. 
+
+PARAMETERS:
+
+username: string that contains a valid username for family search. This will be used for authentication. 
+
+password: string that contains the password for the given username for family search. 
+
+directory: string that contains the directory location of the infile
+
+infile: string containing the name of the infile (see below for specifications on the format of the infile)
+
+county: Unknown. Don't use this unless you're tanner
+
+EXAMPLE CODE:
+
+import sys
+sys.path.append('R:/JoePriceResearch/Python/all_code')
+from FamilySearch1 import FamilySearch
+test = FamilySearch('username001', 'secret_password', 'R:/JoePriceResearch/record_linking/python', 'in1.csv', 'out.dta')
+test.ScrapePerson()
+
+ATTRIBUTES:
+username
+password
+directory
+infile
+outfile
+county
+id
+arkid
+iter
+time_total
+key
+
+METHODS:
+Authenticate()
+ScrapePerson(basic=True)
+_get_ark()
+_get_siblings()
+
+INFILE FORMAT
+
+use .csv
+
+should look like:
+
+ID	PID		
+22	KMXL-LM2
+115	LLJQ-W3L
+...
+
+Note: ID can be what it wants to be (even strings are allowed) but it should uniquely identify
+observations.
+
